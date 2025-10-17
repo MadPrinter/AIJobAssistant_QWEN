@@ -1,0 +1,26 @@
+姓名：张三
+职位：AI算法工程师
+电话：13800001111
+邮箱：zhangsan@example.com
+
+教育背景：
+- 2016 - 2020  北京邮电大学  计算机科学与技术 本科
+
+技能：
+- 熟悉Python、Pytorch、Transformers
+- 掌握LangChain和OpenAI API调用
+- 熟悉FastAPI、Streamlit开发
+- 了解RAG、Agent、Prompt Engineering等AI应用技术
+
+项目经历：
+1. 智能问答系统开发（2023.01 - 2023.06）
+   - 使用LangChain搭建了基于知识库的问答系统。
+   - 实现了FAISS向量检索与OpenAI GPT结合的RAG架构。
+
+2. 简历解析模型优化（2024.02 - 2024.05）
+   - 使用BERT对简历数据集进行微调，实现实体识别。
+   - 提升F1分数至0.92。
+
+自我评价：
+- 对AI应用开发充满热情，学习能力强。
+- 善于解决实际问题，具备良好的沟通能力。

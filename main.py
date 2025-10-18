@@ -25,6 +25,7 @@ signal.signal(signal.SIGTERM, handle_exit)  # 处理系统终止信号
 if __name__ == "__main__":
     print("服务启动中，按 Ctrl+C 关闭...")
 
+# ---------------- 初始化 FastAPI ----------------
 app = FastAPI(title="AIJobAssistant_QWEN API")
 
 app.add_middleware(
@@ -35,6 +36,7 @@ app.add_middleware(
 
 )
 
+# ---------------- 构建知识库 ----------------
 @app.post("/build_kb")
 def build_kb():
     path = build_faiss_kb(source_folder="data/interview_knowledge", index_path=KB_INDEX_PATH)
@@ -56,24 +58,44 @@ async def parse_resume(file: UploadFile):
     skills = extract_skills_with_qwen(text)
     return {"text_snippet": text[:1000], "skills": skills}
 '''
+
+# ---------------- 简历解析（去掉匹配度计算） ----------------
 @app.post("/parse_resume")
-async def parse_resume(file: UploadFile, jd: str = Form(...)):
+async def parse_resume(file: UploadFile):
+    """
+    上传简历 -> 提取文本 & 提取技能（通过千问模型）
+    """
     try:
-        content = await file.read()
-        text = content.decode("utf-8", errors="ignore")
+        # 保存临时文件
+        ext = os.path.splitext(file.filename)[1]
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
+        contents = await file.read()
+        tmp.write(contents)
+        tmp.close()
 
-        # 示例匹配度函数（你已有 compute_match_score）
-        score = compute_match_score(text, jd)
+        # 提取简历文本
+        text = extract_text_simple(tmp.name)
+        os.unlink(tmp.name)
 
-        # ✅ 正确返回JSON格式
-        return JSONResponse(content={"match_score": score, "status": "success"})
+        # 提取技能关键词
+        skills = extract_skills_with_qwen(text)
+
+        # 返回前1000字符的简历片段 + 技能列表
+        return JSONResponse(content={
+            "text_snippet": text[:1000],
+            "skills": skills,
+            "status": "success"
+        })
+
     except Exception as e:
-        # ✅ 返回错误信息也应是JSON
         return JSONResponse(content={"error": str(e), "status": "failed"}, status_code=500)
 
+# ---------------- 匹配度计算 ----------------
 @app.post("/match_score")
 async def match_score(file: UploadFile, jd: str = Form(...)):
-    # parse resume
+    """
+    上传简历 + JD -> 计算匹配度
+    """
     ext = os.path.splitext(file.filename)[1]
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=ext)
     contents = await file.read()
@@ -84,16 +106,19 @@ async def match_score(file: UploadFile, jd: str = Form(...)):
     score = compute_match_score(text, jd)
     return {"match_score": score}
 
+# ---------------- 生成面试题 ----------------
 @app.post("/gen_questions")
 def gen_questions(jd: str = Form(...), n: int = 5):
     qs = generate_questions(jd, n_questions=n)
     return {"questions": qs}
 
+# ---------------- 回答评估 ----------------
 @app.post("/evaluate")
 def evaluate(jd: str = Form(...), question: str = Form(...), answer: str = Form(...)):
     res = evaluate_answer(jd, question, answer)
     return res
 
+# ---------------- 知识库搜索 ----------------
 @app.post("/kb_search")
 def kb_search(q: str = Form(...), top_k: int = 3):
     docs = retrieve_kb(q, index_path=KB_INDEX_PATH, top_k=top_k)

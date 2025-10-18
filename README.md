@@ -42,7 +42,7 @@ AIJobAssistant/
 ├── DockerFile
 ├── README.md
 └── requirements.txt # 环境依赖
-'''
+```
 yaml
 复制代码
 

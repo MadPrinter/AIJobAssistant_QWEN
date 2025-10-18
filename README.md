@@ -121,3 +121,10 @@ v0.2	云端部署 + 多语言支持	🚧 计划中
 👨‍💻 作者与版权
 
 作者：MadPrinter
+<<<<<<< HEAD
+=======
+## 📦 Version v0.02
+- 移除 parse_resume 中的重复匹配度计算逻辑
+- 统一匹配度逻辑至 match_score.py
+- 优化结果展示
+>>>>>>> 38beeee6 (v0.02: 移除 parse_resume 匹配度重复计算，优化结果展示)

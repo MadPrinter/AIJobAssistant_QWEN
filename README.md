@@ -1,5 +1,9 @@
 # 🤖 多智能体AI求职助手 (AI Job Assistant)
 
+## 运行截图
+<img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/2a82e16f-ba7f-47b0-ab8b-d0393e12b995" />
+
+
 ## 项目简介
 
 “多智能体AI求职助手” 是一个基于 **千问大模型 (Qwen)** 的智能应用项目，旨在为求职者提供：
